@@ -16,7 +16,7 @@ void setup() {
   pinMode(A5,INPUT);
   digitalWrite(11,HIGH);
   digitalWrite(10,HIGH);
-  Serial.begin(9600);
+  Serial.begin(9600); //Set baud rate
 }
 
 int LastTurn=-1;
