@@ -1,5 +1,7 @@
 // BANG BANG CODE
 
+int LastTurn=-1,cli=-1;
+
 void setup() {
   // put your setup code here, to run once:
   pinMode(10,OUTPUT); // PWM PIN FOR LEFT MOTOR
@@ -8,18 +10,34 @@ void setup() {
   pinMode(6,OUTPUT); // left motor ctrl 2
   pinMode(8,OUTPUT); // right motor ctrl 1
   pinMode(9,OUTPUT); // right motor ctrl 2
+  pinMode(4,OUTPUT); // Auto-calibration indicator LED
   pinMode(A0,INPUT); // Analog or digital inputs
-  pinMode(A1,INPUT);
-  pinMode(A2,INPUT);
-  pinMode(A3,INPUT);
-  pinMode(A4,INPUT);
-  pinMode(A5,INPUT);
+  pinMode(A1,INPUT); // Analog or digital inputs
+  pinMode(A2,INPUT); // Analog or digital inputs
+  pinMode(A3,INPUT); // Analog or digital inputs
+  pinMode(A4,INPUT); // Analog or digital inputs
+  pinMode(A5,INPUT); // Analog or digital inputs
   digitalWrite(11,HIGH);
   digitalWrite(10,HIGH);
+  
+  /*Auto Callibration. To autocallibrate, place bot on dead center of line, with middle sensor
+  on it, wait for 5 seconds and wait for LED to glow to indicate calibration complete.*/
+  
+  for(int i=0;i<5;i++)
+  {
+    int in=digitalRead(A2);
+    if(in==0)
+      cli=0;
+    else if(in==1)
+      cli=1;
+    delay(1000);
+  }
+  
+  digitalWrite(4,HIGH);
+  Serial.println("Callibration complete");
   Serial.begin(9600); //Set baud rate
 }
 
-int LastTurn=-1;
 
 void drive(void)
 {
@@ -73,7 +91,15 @@ void sleft(void)
   LastTurn=0;
 }
 
-
+int BCD_to_INT(int a, int b, int c, int d, int e, int cal)
+{
+  int sum=0;
+  if(cal==0)
+    sum=31-((16*a)+(8*b)+(4*c)+(2*d)+e);
+  else if (cal==1)
+    sum=((16*a)+(8*b)+(4*c)+(2*d)+e);
+  return sum;
+}
 
 
 void loop() {
@@ -84,15 +110,17 @@ void loop() {
   c=digitalRead(A2);
   d=digitalRead(A1);
   e=digitalRead(A0);
-  sum=31-((16*a)+(8*b)+(4*c)+(2*d)+e); // subtract from 31 for black on white arena
-  // 16   8   4    2    1
+  sum=BCD_to_INT(a,b,c,d,e,cli);
+  
   switch(sum)
   {
-    case 0: { // to avoid overshooting
+    case 0: 
+    { /* to avoid overshooting*/
       if(LastTurn==0) sright();
       else if(LastTurn==1) sleft();
       break;
     }
+    
     case 1: sleft(); break;
     case 2: eleft(); break;
     case 3: sleft(); break;
@@ -109,10 +137,8 @@ void loop() {
     case 24: sright(); break;
     case 28: sright(); break;
     case 30: sright(); break;
-    case 31: sleft(); break; // for default left. You can change to default right as per track
+    case 31: sleft(); break; /* for default left. You can change to default right as per track */
     default: drive(); break;
   }
   
-  
-
 }
