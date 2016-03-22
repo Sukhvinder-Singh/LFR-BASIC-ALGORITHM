@@ -20,7 +20,7 @@ void setup() {
   digitalWrite(11,HIGH);
   digitalWrite(10,HIGH);
   
-  /*Auto Callibration. To autocallibrate, place bot on dead center of line, with middle sensor
+  /*Auto Calibration. To autocalibrate, place bot on the center of line, with middle sensor
   on it, wait for 5 seconds and wait for LED to glow to indicate calibration complete.*/
   
   for(int i=0;i<5;i++)
