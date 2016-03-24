@@ -1,4 +1,5 @@
 // BANG BANG CODE
+/* Code has been tested practically on a real robot */
 
 int LastTurn=-1,cli=-1;
 
@@ -11,6 +12,7 @@ void setup() {
   pinMode(8,OUTPUT); // right motor ctrl 1
   pinMode(9,OUTPUT); // right motor ctrl 2
   pinMode(4,OUTPUT); // Auto-calibration indicator LED
+  pinMode(3,OUTPUT); // LED GROUND
   pinMode(A0,INPUT); // Analog or digital inputs
   pinMode(A1,INPUT); // Analog or digital inputs
   pinMode(A2,INPUT); // Analog or digital inputs
@@ -34,6 +36,7 @@ void setup() {
   }
   
   digitalWrite(4,HIGH);
+  digitalWrite(3,LOW);
   Serial.println("Callibration complete");
   Serial.begin(9600); //Set baud rate
 }
